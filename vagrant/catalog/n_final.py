@@ -41,6 +41,16 @@ def showProjects():
     return render_template('catalog-main.html', projects=projects)
 
 
+# Create anti-forgery state token
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
+                    for x in xrange(32))
+    login_session['state'] = state
+    # return "The current session state is %s" % login_session['state']
+    return render_template('login.html', STATE=state)
+
+
 # # Create a new restaurant
 # @app.route('/project/new/', methods=['GET', 'POST'])
 # def newRestaurant():

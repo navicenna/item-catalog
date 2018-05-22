@@ -41,19 +41,86 @@
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
     </form>
     <form class="form-inline my-2 my-lg-0 ml-auto">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
+      <a class="btn btn-outline-success my-2 my-sm-0" href="/login">Login</a>
     </form>
     <!-- </div> -->
   </nav>
 
+  <br>
+  <br>
+  <!-- List all projects -->
 
-<!-- List all projects -->
+  <!-- test card -->
+  <div class="container">
 
-{% for p in projects %}
+    <div class="card-columns">
 
-{{p}}
+      {% for p in projects %}
 
-{% endfor %}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{p.name}}</h5>
+
+          <ul>
+            {% for i in p.items %}
+            <li class="card-text">{{i.name}}</li>
+            {% endfor %}
+          </ul>
+
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+
+
+      {% endfor %}
+
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">test</h5>
+
+          <ul>
+            <li class="card-text">i.name</li>
+          </ul>
+
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">test</h5>
+
+          <ul>
+            <li class="card-text">i.name</li>
+          </ul>
+
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">test</h5>
+
+          <ul>
+            <li class="card-text">i.name</li>
+          </ul>
+
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+
+
+
+
+    </div>
+  </div>
+
+  </div>
+
+
+
 
 
 </body>
