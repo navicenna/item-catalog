@@ -56,6 +56,8 @@ def login():
 @app.route('/logout')
 def logout():
     login_session.pop('google_token', None)
+    del login_session['username']
+    del login_session['email']
     return redirect(url_for('index'))
 
 
@@ -69,7 +71,13 @@ def authorized():
         )
     login_session['google_token'] = (resp['access_token'], '')
     me = google.get('userinfo')
-    return jsonify({"data": me.data})
+    data = me.data
+    login_session['username'] = data['name']
+    login_session['email'] = data['email']
+
+    return redirect(url_for('index'))
+    # return jsonify({"data": me.data})
+    # return jsonify({"login session": login_session})
 
 
 @google.tokengetter
@@ -101,9 +109,16 @@ def allProjectsJSON():
 # Show all projects
 @app.route('/')
 @app.route('/project/')
-def showProjects():
+def index():
     projects = session.query(Project).all()
-    return render_template('catalog-main.html', projects=projects)
+    if 'username' not in login_session:
+        # return jsonify(projects=[r.serialize for r in projects])
+        return render_template('catalog-main-public.html', projects={})
+        # return render_template('restaurants.html', restaurants={})
+    else:
+        return render_template('catalog-main.html', projects=projects)
+        # return render_template('restaurants.html', restaurants=restaurants)
+
 
 
 

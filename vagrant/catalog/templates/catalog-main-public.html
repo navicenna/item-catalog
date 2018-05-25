@@ -1,0 +1,81 @@
+{% extends "main-public.html" %} 
+{% block content %} 
+
+  <!-- List all projects -->
+
+<h2>In order to access your projects, please login first.</h2>
+<br><br>
+    <div class="card-columns">
+
+      {% for p in projects %}
+      {% endfor %}
+
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Learn how to ride a bicycle (Example #1)</h5>
+
+          <ul>
+            <li class="card-text">Buy a bicycle</li>
+            <li class="card-text">Ride it in an empty parking lot</li>
+          </ul>
+
+          <a href="#" class="btn btn-primary">Edit</a>
+          <a href="#" class="btn btn-primary">Delete</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Learn violin (Example #2)</h5>
+
+          <ul>
+            <li class="card-text">Rent a bicycle</li>
+            <li class="card-text">Take violin lessons</li>
+          </ul>
+
+          <a href="#" class="btn btn-primary">Edit</a>
+          <a href="#" class="btn btn-primary">Delete</a>
+        </div>
+      </div>
+
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Build muscle (Example #3)</h5>
+
+          <ul>
+            <li class="card-text">Go to the gym</li>
+            <li class="card-text">Get a pull-up bar</li>
+          </ul>
+
+          <a href="#" class="btn btn-primary">Edit</a>
+          <a href="#" class="btn btn-primary">Delete</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Learn web development (Example #4)</h5>
+
+          <ul>
+            <li class="card-text">Finish web development course</li>
+            <li class="card-text">Work on fun projects</li>
+            <li class="card-text">Share projects with others and get feedback</li>
+          </ul>
+
+          <a href="#" class="btn btn-primary">Edit</a>
+          <a href="#" class="btn btn-primary">Delete</a>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+
+
+
+
+
+{% endblock %}
