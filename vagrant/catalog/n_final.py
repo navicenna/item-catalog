@@ -1,7 +1,10 @@
+#! /usr/bin/env python3
+
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
-from n_database_setup import Base, Project, Item
+from sqlalchemy.pool import StaticPool
+from n_database_setup import Base, Project, Item, User
 from flask import session as login_session
 import random
 import string
@@ -19,7 +22,9 @@ from flask_oauthlib.client import OAuth
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///projectplanner.db')
+engine = create_engine('sqlite:///projectplanner.db',
+                       connect_args={'check_same_thread': False},
+                       poolclass=StaticPool, echo=True)
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
@@ -55,7 +60,10 @@ def login():
 
 @app.route('/logout')
 def logout():
-    login_session.pop('google_token', None)
+    google_token = login_session.pop('google_token', None)
+    url = 'https://accounts.google.com/o/oauth2/revoke?token={}'.format(google_token)
+    result = requests.get(url)
+
     del login_session['username']
     del login_session['email']
     return redirect(url_for('index'))
@@ -75,6 +83,13 @@ def authorized():
     login_session['username'] = data['name']
     login_session['email'] = data['email']
 
+    # Create user if doesn't exist
+    user_id = getUserID(data["email"])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
+
     return redirect(url_for('index'))
     # return jsonify({"data": me.data})
     # return jsonify({"login session": login_session})
@@ -85,17 +100,39 @@ def get_google_oauth_token():
     return login_session.get('google_token')
 
 
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
+
 # Build out the JSON API endpoints
 @app.route('/project/<int:project_id>/items/JSON')
 def ProjectJSON(project_id):
-    project = session.query(Project).filter_by(id=project_id).one()
+    # project = session.query(Project).filter_by(id=project_id).one()
     items = session.query(Item).filter_by(
         project_id=project_id).all()
     return jsonify(Items=[i.serialize for i in items])
 
 
 @app.route('/project/<int:project_id>/items/<int:item_id>/JSON')
-def ProjectItemJSON(project_id, menu_id):
+def ProjectItemJSON(project_id, item_id):
     Project_Item = session.query(Item).filter_by(id=item_id).one()
     return jsonify(Project_Item=Project_Item.serialize)
 
@@ -122,54 +159,72 @@ def index():
 
 
 
-# # Create a new restaurant
-# @app.route('/project/new/', methods=['GET', 'POST'])
-# def newRestaurant():
-#     if request.method == 'POST':
-#         newRestaurant = Restaurant(name=request.form['name'])
-#         session.add(newRestaurant)
-#         session.commit()
-#         return redirect(url_for('showRestaurants'))
-#     else:
-#         return render_template('newRestaurant.html')
-#     # return "This page will be for making a new restaurant"
-
-# # Edit a restaurant
-
-
-# @app.route('/project/<int:project_id>/edit/', methods=['GET', 'POST'])
-# def editRestaurant(project_id):
-#     editedRestaurant = session.query(
-#         Restaurant).filter_by(id=project_id).one()
-#     if request.method == 'POST':
-#         if request.form['name']:
-#             editedRestaurant.name = request.form['name']
-#             return redirect(url_for('showRestaurants'))
-#     else:
-#         return render_template(
-#             'editRestaurant.html', restaurant=editedRestaurant)
-
-#     # return 'This page will be for editing restaurant %s' % project_id
-
-# # Delete a restaurant
+# Create a new project
+@app.route('/project/new/', methods=['GET', 'POST'])
+def newRestaurant():
+    if 'username' not in login_session:
+        return redirect('/')
+    if request.method == 'POST':
+        newProject = Project(name=request.form['name'])
+        session.add(newProject)
+        session.commit()
+        return redirect(url_for('index'))
+    else:
+        # return "This page will be for making a new restaurant"
+        return render_template('newProject.html')
 
 
-# @app.route('/project/<int:project_id>/delete/', methods=['GET', 'POST'])
-# def deleteRestaurant(project_id):
-#     restaurantToDelete = session.query(
-#         Restaurant).filter_by(id=project_id).one()
-#     if request.method == 'POST':
-#         session.delete(restaurantToDelete)
-#         session.commit()
-#         return redirect(
-#             url_for('showRestaurants', project_id=project_id))
-#     else:
-#         return render_template(
-#             'deleteRestaurant.html', restaurant=restaurantToDelete)
-#     # return 'This page will be for deleting restaurant %s' % project_id
+
+# Edit a project
+@app.route('/project/<int:project_id>/edit/', methods=['GET', 'POST'])
+def editProject(project_id):
+    if 'username' not in login_session:
+        return redirect('/')
+    editedProject = session.query(
+        Project).filter_by(id=project_id).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            editedProject.name = request.form['name']
+            return redirect(url_for('index'))
+    else:
+        return render_template(
+            'editProject.html', project=editedProject)
 
 
-# # Show a restaurant menu
+# Edit a project's name
+@app.route('/project/<int:project_id>/edit-name/', methods=['GET', 'POST'])
+def editProjectName(project_id):
+    if 'username' not in login_session:
+        return redirect('/')
+    editedProject = session.query(
+        Project).filter_by(id=project_id).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            editedProject.name = request.form['name']
+            return redirect(url_for('index'))
+    else:
+        return render_template(
+            'editProjectName.html', project=editedProject)
+
+
+
+# Delete a project
+@app.route('/project/<int:project_id>/delete/', methods=['GET', 'POST'])
+def deleteProject(project_id):
+    if 'username' not in login_session:
+        return redirect('/')
+    projectToDelete = session.query(Project).filter_by(id=project_id).one()
+    if request.method == 'POST':
+        session.delete(projectToDelete)
+        session.commit()
+        return redirect(
+            url_for('index', project_id=project_id))
+    else:
+        return render_template(
+            'deleteProject.html', project=projectToDelete)
+
+
+# # Show a restaproject
 # @app.route('/project/<int:project_id>/')
 # @app.route('/project/<int:project_id>/items/')
 # def showMenu(project_id):

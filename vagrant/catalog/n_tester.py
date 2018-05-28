@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Sat May 19 11:10:28 2018
@@ -26,9 +27,9 @@ rv = c.execute(query).fetchall()
 #print("TEST", rv)
 #print('')
 
-query = 'select * from project;'
+query = 'select * from user;'
 rv = c.execute(query).fetchall()
-#print("PROJECTS", rv)
+print("users", rv)
 #print('')
 
 query = 'select * from item limit 2;'
