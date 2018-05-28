@@ -1,0 +1,44 @@
+{% extends "main.html" %} {% block content %}
+
+<h2> Edit Project </h2>
+<br>
+<br>
+<div class="card-deck mb-12">
+    <div class="col-sm-6">
+
+        <div class="card box-shadow">
+            <div class="card-body">
+                <h5 class="card-title">{{project.name}}
+                    <a href="/project/{{project.id}}/edit-name/" class="btn btn-light">Edit name</a>
+                </h5>
+                <ul>
+                    {% for i in project.items %}
+                    <li class="card-text mb-4">{{i.name}}
+                        <a href="/project/{{project.id}}/{{i.id}}/edit/" class="btn btn-light">Edit</a>
+                        <a href="/project/{{project.id}}/{{i.id}}/delete/" class="btn btn-light">Delete</a>
+                    </li>
+                    {% endfor %}
+                    <li class="card-text">
+                        <a href="/project/{{project.id}}/items/add/" class="btn btn-success">Add Item</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <form action="{{ url_for('editProject', project_id = project.id) }}" method = 'post'>
+    
+    
+    <p>Name:</p>
+    <input type ='text' size='30' name='name' placeholder = '{{ project.name }}'>
+    
+
+    <input type='submit' value='Edit'>
+    
+    
+    <a href = "{{ url_for('index') }}"> Cancel </a>
+    
+</form> -->
+
+    {% endblock %}

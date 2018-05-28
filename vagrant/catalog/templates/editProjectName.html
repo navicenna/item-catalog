@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+{% block content %}
+
+<h2> Edit Restaurant Name</h2>
+<br><br>
+<form action="{{ url_for('editProject', project_id = project.id) }}" method = 'post'>
+    
+    <p>Name:</p>
+    <input type ='text' size='30' name='name' placeholder = '{{ project.name }}'>
+    <input type='submit' value='Edit'>
+    <a href = "{{ url_for('index') }}"> Cancel </a>
+    
+</form>
+
+{% endblock %}

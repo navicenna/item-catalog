@@ -1,0 +1,14 @@
+{% extends "main.html" %} 
+{% block content %}
+
+<h3> Are you sure you want to delete {{project.name}}? </h1>
+    <br>
+    <form action="#" method = 'post'>
+        <input class="btn" type='submit', value = 'Delete'>
+        <br>
+        <a class="btn" href = '/'> Cancel </a>
+    </form>
+<br>
+
+
+{% endblock %}
