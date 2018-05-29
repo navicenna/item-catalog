@@ -223,6 +223,35 @@ def deleteProject(project_id):
         return render_template(
             'deleteProject.html', project=projectToDelete)
 
+# Create a new item
+@app.route(
+    '/project/<int:project_id>/items/new/', methods=['GET', 'POST'])
+def newItem(project_id):
+    if 'username' not in login_session:
+        return redirect('/')
+    if request.method == 'POST':
+        newItem = Item(name=request.form['name'], project_id=project_id)
+        session.add(newItem)
+        session.commit()
+        return redirect(url_for('index'))
+    else:
+        return render_template('newItem.html', project_id=project_id)
+
+
+# Delete an item
+@app.route('/project/<int:project_id>/items/<int:item_id>/delete/',
+           methods=['GET', 'POST'])
+def deleteItem(project_id, item_id): 
+    if 'username' not in login_session:
+        return redirect('/')
+    itemToDelete = session.query(Item).filter_by(id=item_id).one()
+    if request.method == 'POST':
+        session.delete(itemToDelete)
+        session.commit()
+        return redirect(url_for('index'))
+    else:
+        return render_template('deleteItem.html', item=itemToDelete)
+    # return "This page is for deleting menu item %s" % item_id
 
 # # Show a restaproject
 # @app.route('/project/<int:project_id>/')
@@ -234,25 +263,8 @@ def deleteProject(project_id):
 #     return render_template('menu.html', items=items, restaurant=restaurant)
 #     # return 'This page is the menu for restaurant %s' % project_id
 
-# # Create a new menu item
 
 
-# @app.route(
-#     '/project/<int:project_id>/items/new/', methods=['GET', 'POST'])
-# def newMenuItem(project_id):
-#     if request.method == 'POST':
-#         newItem = MenuItem(name=request.form['name'], description=request.form[
-#                            'description'], price=request.form['price'], course=request.form['course'], project_id=project_id)
-#         session.add(newItem)
-#         session.commit()
-
-#         return redirect(url_for('showMenu', project_id=project_id))
-#     else:
-#         return render_template('newmenuitem.html', project_id=project_id)
-
-#     return render_template('newMenuItem.html', restaurant=restaurant)
-#     # return 'This page is for making a new menu item for restaurant %s'
-#     # %project_id
 
 # # Edit a menu item
 
@@ -279,19 +291,7 @@ def deleteProject(project_id):
 
 #     # return 'This page is for editing menu item %s' % menu_id
 
-# # Delete a menu item
 
-
-# @app.route('/project/<int:project_id>/items/<int:item_id>/delete',
-#            methods=['GET', 'Project_Item'])
-# def deleteMenuItem(oject_id, menu_id):item itemToDelete = session.query(MenuItem).filter_by(id=menu_id).one()
-#     if request.method == 'POST':
-#         session.delete(itemToDelete)
-#         session.commit()
-#         return redirect(url_for('showMenu', project_id=project_id))
-#     else:
-#         return render_template('deleteMenuItem.html', item=itemToDelete)
-#     # return "This page is for deleting menu item %s" % menu_id
 
 
 if __name__ == '__main__':

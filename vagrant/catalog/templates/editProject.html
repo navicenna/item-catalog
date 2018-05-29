@@ -14,12 +14,12 @@
                 <ul>
                     {% for i in project.items %}
                     <li class="card-text mb-4">{{i.name}}
-                        <a href="/project/{{project.id}}/{{i.id}}/edit/" class="btn btn-light">Edit</a>
-                        <a href="/project/{{project.id}}/{{i.id}}/delete/" class="btn btn-light">Delete</a>
+                        <a href="/project/{{project.id}}/items/{{i.id}}/edit/" class="btn btn-light">Edit</a>
+                        <a href="/project/{{project.id}}/items/{{i.id}}/delete/" class="btn btn-light">Delete</a>
                     </li>
                     {% endfor %}
                     <li class="card-text">
-                        <a href="/project/{{project.id}}/items/add/" class="btn btn-success">Add Item</a>
+                        <a href="/project/{{project.id}}/items/new/" class="btn btn-success">Add Item</a>
                     </li>
                 </ul>
             </div>
