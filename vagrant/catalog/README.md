@@ -22,7 +22,7 @@ HOW TO USE:
 1. Navigate to the vagrant directory
 2. Run "vagrant up" to start the VM
 3. Run "vagrant ssh" to log in
-4. Clone my repository: https://github.com/nbahmanyar/logs_proj.git
+4. Clone my repository: https://github.com/nbahmanyar/item-catalog.git
 5. Navigate to the repository in bash
 6. Run "python n_final.py"
 7. Access the website at localhost:5566
