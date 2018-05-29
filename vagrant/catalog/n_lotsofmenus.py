@@ -30,19 +30,24 @@ project1 = Project(name="Full-Stack Nanodegree")
 session.add(project1)
 session.commit()
 
-Item1 = Item(name="Item Catalog Project", description="Create an item catalog which implements OAuth, CRUD, and Flask.",
+Item1 = Item(name="Item Catalog Project",
+             description="Create an item catalog which " +
+                         "implements OAuth, CRUD, and Flask.",
              project=project1)
 session.add(Item1)
 session.commit()
 
-Item2 = Item(name="Learn Front-End Development", description="Become proficient in Ajax, JQuery, and JavaScript.",
+Item2 = Item(name="Learn Front-End Development", 
+             description="Become proficient in Ajax, " +
+                         "JQuery, and JavaScript.",
              project=project1)
 session.add(Item2)
 session.commit()
 
 
 # Actuarial Exam IFM
-project2 = Project(name="Pass Exam IFM (Investments and Financial Markets)")
+project2 = Project(name="Pass Exam IFM (Investments " +
+                        " and Financial Markets)")
 
 session.add(project2)
 session.commit()
@@ -61,9 +66,6 @@ Item3 = Item(name="Learn How to Price Futures", description="Practice computing 
              project=project2)
 session.add(Item3)
 session.commit()
-
-
-
 
 
 print("done adding items")

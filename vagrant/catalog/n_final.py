@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
-
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from flask import Flask, render_template, request
+from flask import redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -17,8 +17,10 @@ import requests
 from flask_oauthlib.client import OAuth
 
 
-# Some code adapted from this flask-oauth example https://github.com/lepture/flask-oauthlib/blob/master/example/google.py
-
+# Some code adapted from this flask-oauth example
+# https://github.com/lepture/flask-oauthlib/blob/master/example/google.py
+# And also from the official Udacity repositories associated with
+# the authentication lesson
 
 app = Flask(__name__)
 
@@ -32,12 +34,14 @@ session = DBSession()
 
 
 # Configure the OAUTH parameters
-app.config['GOOGLE_ID'] = "825349126192-ujidiia6lfn8vok2o1ep879r37qlrumv.apps.googleusercontent.com"
+app.config['GOOGLE_ID'] =
+"825349126192-ujidiia6lfn8vok2o1ep879r37qlrumv.apps.googleusercontent.com"
 app.config['GOOGLE_SECRET'] = "mxi8yfVHvvtTDR8fSdFGesAm"
 app.debug = True
 app.secret_key = 'development'
 oauth = OAuth(app)
 
+# Configure google oauth object
 google = oauth.remote_app(
     'google',
     consumer_key=app.config.get('GOOGLE_ID'),
@@ -52,6 +56,7 @@ google = oauth.remote_app(
     authorize_url='https://accounts.google.com/o/oauth2/auth',
 )
 
+
 # Login
 @app.route('/login')
 def login():
@@ -61,7 +66,8 @@ def login():
 @app.route('/logout')
 def logout():
     google_token = login_session.pop('google_token', None)
-    url = 'https://accounts.google.com/o/oauth2/revoke?token={}'.format(google_token)
+    url = 'https://accounts.google.com/o/oauth2/revoke?token={}'.format(
+        google_token)
     result = requests.get(url)
 
     del login_session['username']
@@ -89,10 +95,7 @@ def authorized():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
-
     return redirect(url_for('index'))
-    # return jsonify({"data": me.data})
-    # return jsonify({"login session": login_session})
 
 
 @google.tokengetter
@@ -157,8 +160,6 @@ def index():
         # return render_template('restaurants.html', restaurants=restaurants)
 
 
-
-
 # Create a new project
 @app.route('/project/new/', methods=['GET', 'POST'])
 def newRestaurant():
@@ -172,7 +173,6 @@ def newRestaurant():
     else:
         # return "This page will be for making a new restaurant"
         return render_template('newProject.html')
-
 
 
 # Edit a project
@@ -207,7 +207,6 @@ def editProjectName(project_id):
             'editProjectName.html', project=editedProject)
 
 
-
 # Delete a project
 @app.route('/project/<int:project_id>/delete/', methods=['GET', 'POST'])
 def deleteProject(project_id):
@@ -222,6 +221,7 @@ def deleteProject(project_id):
     else:
         return render_template(
             'deleteProject.html', project=projectToDelete)
+
 
 # Create a new item
 @app.route(
@@ -241,7 +241,7 @@ def newItem(project_id):
 # Delete an item
 @app.route('/project/<int:project_id>/items/<int:item_id>/delete/',
            methods=['GET', 'POST'])
-def deleteItem(project_id, item_id): 
+def deleteItem(project_id, item_id):
     if 'username' not in login_session:
         return redirect('/')
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
@@ -251,47 +251,23 @@ def deleteItem(project_id, item_id):
         return redirect(url_for('index'))
     else:
         return render_template('deleteItem.html', item=itemToDelete)
-    # return "This page is for deleting menu item %s" % item_id
-
-# # Show a restaproject
-# @app.route('/project/<int:project_id>/')
-# @app.route('/project/<int:project_id>/items/')
-# def showMenu(project_id):
-#     restaurant = session.query(Restaurant).filter_by(id=project_id).one()
-#     items = session.query(MenuItem).filter_by(
-#         project_id=project_id).all()
-#     return render_template('menu.html', items=items, restaurant=restaurant)
-#     # return 'This page is the menu for restaurant %s' % project_id
 
 
-
-
-# # Edit a menu item
-
-
-# @app.route('/project/<int:project_id>/items/<int:item_id>/edit',
-#            methods=['GET', 'Project_Item'])
-# def editMenuItem(oject_id, menu_id):item editedItem = session.query(MenuItem).filter_by(id=menu_id).one()
-#     if request.method == 'POST':
-#         if request.form['name']:
-#             editedItem.name = request.form['name']
-#         if request.form['description']:
-#             editedItem.description = request.form['name']
-#         if request.form['price']:
-#             editedItem.price = request.form['price']
-#         if request.form['course']:
-#             editedItem.course = request.form['course']
-#         session.add(editedItem)
-#         session.commit()
-#         return redirect(url_for('showMenu', project_id=project_id))
-#     else:
-
-#         return render_template(
-#             'editmenuitem.html', project_id=project_id, menu_id=menu_id, item=editedItem)
-
-#     # return 'This page is for editing menu item %s' % menu_id
-
-
+# Edit a menu item
+@app.route('/project/<int:project_id>/items/<int:item_id>/edit/',
+           methods=['GET', 'POST'])
+def editItem(project_id, item_id):
+    if 'username' not in login_session:
+        return redirect('/')
+    editedItem = session.query(Item).filter_by(id=item_id).one()
+    if request.method == 'POST':
+        editedItem.name = request.form['name']
+        # session.add(editedItem)
+        session.commit()
+        return redirect(url_for('index'))
+    else:
+        return render_template(
+            'editItem.html', project_id=project_id, item=editedItem)
 
 
 if __name__ == '__main__':
