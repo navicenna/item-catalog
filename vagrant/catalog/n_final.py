@@ -19,8 +19,8 @@ from flask_oauthlib.client import OAuth
 
 # Some code adapted from this flask-oauth example
 # https://github.com/lepture/flask-oauthlib/blob/master/example/google.py
-# And also from the official Udacity repositories associated with
-# the authentication lesson
+# Some general concepts also come from the official 
+# Udacity repositories associated with the authentication lesson
 
 app = Flask(__name__)
 
@@ -128,7 +128,8 @@ def getUserID(email):
 # Build out the JSON API endpoints
 @app.route('/project/<int:project_id>/items/JSON')
 def ProjectJSON(project_id):
-    # project = session.query(Project).filter_by(id=project_id).one()
+    if 'username' not in login_session:
+        return redirect('/')
     items = session.query(Item).filter_by(
         project_id=project_id).all()
     return jsonify(Items=[i.serialize for i in items])
@@ -136,12 +137,16 @@ def ProjectJSON(project_id):
 
 @app.route('/project/<int:project_id>/items/<int:item_id>/JSON')
 def ProjectItemJSON(project_id, item_id):
+    if 'username' not in login_session:
+        return redirect('/')
     Project_Item = session.query(Item).filter_by(id=item_id).one()
     return jsonify(Project_Item=Project_Item.serialize)
 
 
 @app.route('/project/JSON')
 def allProjectsJSON():
+    if 'username' not in login_session:
+        return redirect('/')
     projects = session.query(Project).all()
     return jsonify(projects=[r.serialize for r in projects])
 
@@ -152,12 +157,9 @@ def allProjectsJSON():
 def index():
     projects = session.query(Project).all()
     if 'username' not in login_session:
-        # return jsonify(projects=[r.serialize for r in projects])
         return render_template('catalog-main-public.html', projects={})
-        # return render_template('restaurants.html', restaurants={})
     else:
         return render_template('catalog-main.html', projects=projects)
-        # return render_template('restaurants.html', restaurants=restaurants)
 
 
 # Create a new project
@@ -171,7 +173,6 @@ def newRestaurant():
         session.commit()
         return redirect(url_for('index'))
     else:
-        # return "This page will be for making a new restaurant"
         return render_template('newProject.html')
 
 

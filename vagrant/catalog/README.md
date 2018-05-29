@@ -6,10 +6,10 @@ By: Navid Bahmanyar
 
 SOURCES
 
-Some code was adapted from the flask-oauth example here:
+Some code adapted from this flask-oauth example
 https://github.com/lepture/flask-oauthlib/blob/master/example/google.py
-as well as the official Udacity repositories associated with the
-authentication lesson.
+Some general concepts also come from the official 
+Udacity repositories associated with the authentication lesson
 
 
 MODULES
